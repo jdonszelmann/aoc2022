@@ -3,8 +3,7 @@ use std::fs::read;
 pub fn run() {
     println!("aoc 2022 day 16 part 1");
 
-    let _input = read("/home/jonathan/Documents/projects/aoc2022/src/day16/input_part1.txt")
-        .expect("no input file found");
+    let _input = read("src/day16/input_part1.txt").expect("no input file found");
 }
 
 #[cfg(test)]
