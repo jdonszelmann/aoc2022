@@ -1,4 +1,5 @@
 use super::elf_sums;
+use minmaxn::MinMaxN;
 use std::fs::read_to_string;
 
 pub fn run() {
@@ -9,10 +10,7 @@ pub fn run() {
 }
 
 pub fn implementation(inp: &str) -> i64 {
-    let mut sums = elf_sums(inp);
-    sums.sort();
-
-    sums.into_iter().rev().take(3).sum()
+    elf_sums(inp).max_n_iter::<3>().sum()
 }
 
 #[cfg(test)]

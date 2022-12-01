@@ -9,11 +9,10 @@ pub fn parse(inp: &str) -> impl Iterator<Item = impl Iterator<Item = &str>> {
         .map(|i| i.split('\n').filter(|i| i.trim() != ""))
 }
 
-pub fn elf_sums(inp: &str) -> Vec<i64> {
+pub fn elf_sums(inp: &str) -> impl Iterator<Item = i64> + '_ {
     parse(inp)
         .map(|i| i.map(|j| j.parse::<i64>().expect("integer")))
         .map(|i| i.sum())
-        .collect()
 }
 
 pub fn run() {

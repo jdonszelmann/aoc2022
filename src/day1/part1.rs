@@ -9,7 +9,7 @@ pub fn run() {
 }
 
 pub fn implementation(inp: &str) -> i64 {
-    elf_sums(inp).into_iter().max().expect("at least one")
+    elf_sums(inp).max().expect("at least one")
 }
 
 #[cfg(test)]
