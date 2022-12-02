@@ -24,8 +24,8 @@ fn main() {{
         d = dirs_path / f"day{i}"
         os.makedirs(d)
 
-        if not (d / "input_part1.txt").exists():
-            with open(d / "input_part1.txt", "w") as f:
+        if not (d / "data.in").exists():
+            with open(d / "data.in", "w") as f:
                 pass
         if not (d / "input_part2.txt").exists():
             with open(d / "input_part2.txt", "w") as f:
@@ -35,15 +35,15 @@ fn main() {{
             with open(d / "main.py", "w") as f:
                 f.write("""
 def main():
-    input_part1 = open("input_part1.txt").read()
+    input_part1 = open("data.in").read()
     input_part2 = open("input_part2.txt").read()
                 
 if __name__ == '__main__':
     main()  
                 """)
 
-        if not (d / "mod.rs").exists():
-            with open(d / "mod.rs", "w") as f:
+        if not (d / "day7").exists():
+            with open(d / "day7", "w") as f:
                 f.write(f"""
 pub mod part1;
 pub mod part2;
@@ -75,7 +75,7 @@ use std::fs::read;
 pub fn run() {{
     println!("aoc 2022 day {i} part 1");
 
-    let input = read("{d}/input_part1.txt").expect("no input file found");
+    let input = read("{d}/data.in").expect("no input file found");
 }}
 
 #[cfg(test)]
@@ -96,7 +96,7 @@ use std::fs::read;
 pub fn run() {{
     println!("aoc 2022 day {i} part 2");
 
-    let input = read("{d}/input_part1.txt").expect("no input file found");
+    let input = read("{d}/data.in").expect("no input file found");
 }}
 
 

@@ -2,7 +2,7 @@
 def main():
     inp = [
         sum(int(j) for j in i.split("\n") if j.strip() != "")
-        for i in open("input_part1.txt").read().split("\n\n")
+        for i in open("data.in").read().split("\n\n")
     ]
     inp.sort()
 

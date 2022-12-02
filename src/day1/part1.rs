@@ -4,7 +4,7 @@ use std::fs::read_to_string;
 pub fn run() {
     println!("aoc 2022 day 1 part 1");
 
-    let input = read_to_string("src/day1/input_part1.txt").expect("no input file found");
+    let input = read_to_string("src/day1/data.in").expect("no input file found");
     println!("{}", implementation(&input));
 }
 
@@ -19,7 +19,7 @@ mod tests {
 
     #[test]
     pub fn test_day_1_part_1_real_input() {
-        let input = read_to_string("src/day1/input_part1.txt").expect("no input file found");
+        let input = read_to_string("src/day1/data.in").expect("no input file found");
         assert_eq!(implementation(&input), 70509);
     }
 

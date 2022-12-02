@@ -1,6 +1,6 @@
 
 def main():
-    input_part1 = open("input_part1.txt").read()
+    input_part1 = open("data.in").read()
 
     table1 = {
         ('A', 'X'): 4,

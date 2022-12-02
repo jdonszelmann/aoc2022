@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 mod day1;
 mod day10;
 mod day11;
@@ -10,12 +12,6 @@ mod day17;
 mod day18;
 mod day19;
 mod day2;
-mod day20;
-mod day21;
-mod day22;
-mod day23;
-mod day24;
-mod day25;
 mod day3;
 mod day4;
 mod day5;
@@ -30,7 +26,7 @@ fn main() {
     day3::run();
     day4::run();
     day5::run();
-    day6::run();
+    day7::run();
     day7::run();
     day8::run();
     day9::run();
@@ -44,10 +40,4 @@ fn main() {
     day17::run();
     day18::run();
     day19::run();
-    day20::run();
-    day21::run();
-    day22::run();
-    day23::run();
-    day24::run();
-    day25::run();
 }

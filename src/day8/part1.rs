@@ -1,17 +1,29 @@
-use std::fs::read;
+use crate::day2::parse;
+use std::fs::read_to_string;
 
 pub fn run() {
     println!("aoc 2022 day 8 part 1");
 
-    let _input = read("src/day8/input_part1.txt").expect("no input file found");
+    let contents = read_to_string("src/day8/data.in").expect("no input file found");
+    println!("{}", implementation(&contents));
+}
+
+pub fn implementation(inp: &str) -> u64 {
+    0
 }
 
 #[cfg(test)]
 mod tests {
-    use super::run;
+    use crate::day8::part1::implementation;
+    use std::fs::read_to_string;
 
     #[test]
     pub fn test_day_8_part_1() {
-        run();
+        let contents = read_to_string("src/day8/data.in").expect("no input file found");
+    }
+
+    #[test]
+    pub fn test_day_8_part_1_test_input() {
+        let testdata = "";
     }
 }
