@@ -4,8 +4,8 @@ pub mod part2;
 pub use part1::run as run_part1;
 pub use part2::run as run_part2;
 
-pub fn parse(inp: &str) -> impl Iterator<Item = u64> + '_ {
-    Vec::new().into_iter()
+pub fn parse(inp: &str) -> impl Iterator<Item = &str> + '_ {
+    inp.split('\n')
 }
 
 pub fn run() {

@@ -1,0 +1,1 @@
+print([sum(ord(o:=m(i).pop())-96+58*o.isupper()for i in zip(*[iter(open("data.in").read().split("\n"))]*l))for m,l in[(lambda i:set(i[0][:len(i[0])//2])&set(i[0][len(i[0])//2:]),1),(lambda i:set(i[0])&set(i[1])&set(i[2]),3)]])
