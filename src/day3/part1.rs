@@ -13,12 +13,11 @@ pub fn implementation(inp: &str) -> u64 {
     parse(inp)
         .map(|i| i.split_at(i.len() / 2))
         .map(|(i, j)| [i, j])
-        .map(|i| *i.into_iter()
+        .flat_map(|i| i.into_iter()
             .map(|i| i.chars())
             .map(HashSet::from_iter)
             .reduce(|ref x, ref y| x.intersection(y).copied().collect::<HashSet<_>>())
             .unwrap()
-            .iter().next().unwrap()
         )
         .map(|i| match i {
             'a'..='z'=>i as u64 - 97,
