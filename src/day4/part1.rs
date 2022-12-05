@@ -1,5 +1,7 @@
 use crate::day4::parse;
+use itertools::Itertools;
 use std::fs::read_to_string;
+use std::ops::RangeInclusive;
 
 pub fn run() {
     println!("aoc 2022 day 4 part 1");
@@ -22,7 +24,7 @@ mod tests {
     #[test]
     pub fn test_day_4_part_1() {
         let contents = read_to_string("src/day4/data.in").expect("no input file found");
-        assert_eq!(implementation(&contents), 528)
+        assert_eq!(implementation(&contents), 528);
     }
 
     #[test]
