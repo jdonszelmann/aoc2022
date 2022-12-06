@@ -1,4 +1,7 @@
 use crate::day2::parse;
+use crate::day6::first_subsequence_length;
+use itertools::Itertools;
+use std::collections::HashSet;
 use std::fs::read_to_string;
 
 pub fn run() {
@@ -8,8 +11,8 @@ pub fn run() {
     println!("{}", implementation(&contents));
 }
 
-pub fn implementation(inp: &str) -> u64 {
-    0
+pub fn implementation(inp: &str) -> usize {
+    first_subsequence_length(inp.chars().collect(), 4)
 }
 
 #[cfg(test)]
@@ -20,10 +23,15 @@ mod tests {
     #[test]
     pub fn test_day_6_part_1() {
         let contents = read_to_string("src/day6/data.in").expect("no input file found");
+        assert_eq!(implementation(&contents), 1582)
     }
 
     #[test]
     pub fn test_day_6_part_1_test_input() {
-        let testdata = "";
+        assert_eq!(implementation("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg"), 10);
+        assert_eq!(implementation("bvwbjplbgvbhsrlpgdmjqwftvncz"), 5);
+        assert_eq!(implementation("nppdvjthqldpwncqszvftbrmjlhg"), 6);
+        assert_eq!(implementation("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg"), 10);
+        assert_eq!(implementation("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw"), 11);
     }
 }
