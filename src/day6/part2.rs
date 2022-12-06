@@ -9,7 +9,7 @@ pub fn run() {
 }
 
 pub fn implementation(inp: &str) -> usize {
-    first_subsequence_length(inp.chars().collect(), 14)
+    first_subsequence_length::<_, 14>(inp.chars())
 }
 
 #[cfg(test)]

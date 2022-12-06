@@ -5,15 +5,16 @@ pub use part1::run as run_part1;
 pub use part2::run as run_part2;
 use std::collections::HashSet;
 use std::hash::Hash;
+use array_windows::ArrayWindowsExt;
+use itertools::Itertools;
 
-pub fn first_subsequence_length<T: Hash + Eq>(seq: Vec<T>, n: usize) -> usize {
-    seq.windows(n)
-        .map::<HashSet<&T>, _>(HashSet::from_iter)
-        .enumerate()
-        .find(|(_, i)| i.len() == n)
+pub fn first_subsequence_length<T: Hash + Eq + Clone, const N: usize>(seq: impl Iterator<Item=T>) -> usize {
+    seq.array_windows::<N>()
+        .map::<HashSet<T>, _>(HashSet::from_iter)
+        .find_position(|i| i.len() == N)
         .unwrap()
         .0
-        + n
+        + N
 }
 
 pub fn run() {

@@ -6,9 +6,16 @@ version = 3
 name = "aoc2022"
 version = "0.1.0"
 dependencies = [
+ "array_windows",
  "itertools",
  "minmaxn",
 ]
+
+[[package]]
+name = "array_windows"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "903b608108744a84101ec1bd75266785d5dec9c76bf0483074f12c91e8a97d6c"
 
 [[package]]
 name = "either"
