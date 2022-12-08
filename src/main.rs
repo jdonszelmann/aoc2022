@@ -19,6 +19,7 @@ mod day6;
 mod day7;
 mod day8;
 mod day9;
+mod take_while_inclusive;
 
 fn main() {
     day1::run();

@@ -73,12 +73,10 @@ pub fn parse<'a>(inp: &'a str) -> Files<'a> {
             ["$", "cd", name] => {
                 path.push(name);
             }
-            ["dir", name] => {
-                root
-                    .find_dir(&path)
-                    .unwrap()
-                    .create(name, File::Dir(Default::default()))
-            },
+            ["dir", name] => root
+                .find_dir(&path)
+                .unwrap()
+                .create(name, File::Dir(Default::default())),
             [size, name] => {
                 root.find_dir(&path)
                     .unwrap()
