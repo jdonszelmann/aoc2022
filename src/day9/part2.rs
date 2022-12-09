@@ -1,4 +1,5 @@
 use crate::day2::parse;
+use crate::day9::simulate_snek;
 use std::fs::read_to_string;
 
 pub fn run() {
@@ -8,22 +9,18 @@ pub fn run() {
     println!("{}", implementation(&contents));
 }
 
-pub fn implementation(inp: &str) -> u64 {
-    0
+pub fn implementation(inp: &str) -> usize {
+    simulate_snek::<9>(inp)
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::day9::part1::implementation;
+    use crate::day9::part2::implementation;
     use std::fs::read_to_string;
 
     #[test]
     pub fn test_day_9_part_2() {
         let contents = read_to_string("src/day9/data.in").expect("no input file found");
-    }
-
-    #[test]
-    pub fn test_day_9_part_2_test_input() {
-        let testdata = "";
+        assert_eq!(implementation(&contents), 2405);
     }
 }
