@@ -7,7 +7,86 @@ pub use part1::run as run_part1;
 pub use part2::run as run_part2;
 use std::cell::{Cell, RefCell};
 use std::collections::VecDeque;
-use std::str::FromStr;
+use std::str::{Chars, FromStr};
+
+pub struct Parser<'a> {
+    stream: MultiPeek<Chars<'a>>,
+}
+
+impl<'a> Parser<'a> {
+    pub fn new(i: &'a str) -> Self {
+        Self {
+            stream: i.chars().multipeek(),
+        }
+    }
+
+    pub fn accept(&mut self, c: char) -> Option<()> {
+        if self.stream.peek() == Some(&c) {
+            let _ = self.stream.next();
+            // println!("accept: {c}");
+            Some(())
+        } else {
+            self.stream.reset_peek();
+            None
+        }
+    }
+
+    pub fn accept_with(&mut self, c: impl Fn(char) -> bool) -> Option<char> {
+        if let Some(&i) = self.stream.peek() {
+            if c(i) {
+                let _ = self.stream.next();
+                Some(i)
+            } else {
+                self.stream.reset_peek();
+                None
+            }
+        } else {
+            self.stream.reset_peek();
+            None
+        }
+    }
+
+    pub fn accept_str(&mut self, s: &str) -> Option<()> {
+        for i in s.chars() {
+            if self.stream.peek() != Some(&i) {
+                self.stream.reset_peek();
+                return None;
+            }
+        }
+
+        // println!("accept: {s}");
+        for i in s.chars() {
+            self.stream.next();
+        }
+
+        Some(())
+    }
+
+    fn whitespace(&mut self) -> bool {
+        let mut res = false;
+
+        while self.accept_with(|i| i.is_whitespace()).is_some() {
+            res = true;
+        }
+
+        res
+    }
+
+    fn parse_num<T: FromStr>(&mut self) -> Option<T> {
+        let mut res = String::new();
+
+        while let Some(i) = self.accept_with(|i| i.is_ascii_digit()) {
+            res.push(i)
+        }
+
+        if res.is_empty() {
+            None
+        } else {
+            // println!("num: {res}");
+            Some(res.parse().ok()?)
+        }
+    }
+}
 
 #[derive(Debug)]
 pub enum Operation {
@@ -31,88 +110,39 @@ impl Operation {
 type OpFn<S> = fn(Box<S>, Box<S>) -> S;
 
 impl Operation {
-    fn whitespace(stream: &mut MultiPeek<impl Iterator<Item = char>>) {
-        if let Some(i) = stream.peek() {
-            if i.is_whitespace() {
-                stream.next();
-                Self::whitespace(stream);
-            }
-        }
-
-        stream.reset_peek();
-    }
-
-    fn parse_expr(stream: &mut MultiPeek<impl Iterator<Item = char>>) -> Option<Self> {
-        Self::whitespace(stream);
+    fn parse_expr(stream: &mut Parser) -> Option<Self> {
+        stream.whitespace();
         let left = Self::parse_atom(stream)?;
-        Self::whitespace(stream);
+        stream.whitespace();
 
         if let Some(op) = Self::parse_op(stream) {
-            Self::whitespace(stream);
+            stream.whitespace();
             Some(op(Box::new(left), Box::new(Self::parse_atom(stream)?)))
         } else {
             Some(left)
         }
     }
 
-    fn parse_op(stream: &mut MultiPeek<impl Iterator<Item = char>>) -> Option<OpFn<Self>> {
-        match stream.peek() {
-            Some('*') => {
-                stream.next();
-                Some(Self::Mul)
-            }
-            Some('+') => {
-                stream.next();
-                Some(Self::Add)
-            }
-            _ => {
-                stream.reset_peek();
-                None
-            }
+    fn parse_op(stream: &mut Parser) -> Option<OpFn<Self>> {
+        if stream.accept('*').is_some() {
+            Some(Self::Mul)
+        } else if stream.accept('+').is_some() {
+            Some(Self::Add)
+        } else {
+            None
         }
     }
 
-    fn parse_atom(stream: &mut MultiPeek<impl Iterator<Item = char>>) -> Option<Self> {
+    fn parse_atom(stream: &mut Parser) -> Option<Self> {
         Self::parse_old(stream).or_else(|| Self::parse_const(stream))
     }
 
-    fn parse_const(stream: &mut MultiPeek<impl Iterator<Item = char>>) -> Option<Self> {
-        let mut res = String::new();
-        while let Some(i) = stream.peek() {
-            if i.is_ascii_digit() {
-                res.push(*i)
-            } else {
-                stream.reset_peek();
-                break;
-            }
-        }
-
-        if res.is_empty() {
-            None
-        } else {
-            Some(Self::Const(res.parse().ok()?))
-        }
+    fn parse_const(stream: &mut Parser) -> Option<Self> {
+        Some(Self::Const(stream.parse_num()?))
     }
 
-    fn parse_old(stream: &mut MultiPeek<impl Iterator<Item = char>>) -> Option<Self> {
-        if stream.peek() == Some(&'o') && stream.peek() == Some(&'l') && stream.peek() == Some(&'d')
-        {
-            for i in 0..3 {
-                stream.next();
-            }
-            Some(Self::Old)
-        } else {
-            stream.reset_peek();
-            None
-        }
-    }
-}
-
-impl FromStr for Operation {
-    type Err = ();
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Self::parse_expr(&mut s.chars().multipeek()).ok_or(())
+    fn parse_old(stream: &mut Parser) -> Option<Self> {
+        stream.accept_str("old").map(|_| Self::Old)
     }
 }
 
@@ -127,51 +157,108 @@ pub struct Monkey {
     num_inspections: Cell<u64>,
 }
 
+impl Monkey {
+    fn parse_header(stream: &mut Parser) -> Option<usize> {
+        stream.whitespace();
+        stream.accept_str("Monkey")?;
+        stream.whitespace();
+        let num = stream.parse_num()?;
+        stream.accept(':')?;
+        stream.whitespace();
+
+        Some(num)
+    }
+
+    fn parse_starting_items(stream: &mut Parser) -> Option<VecDeque<i64>> {
+        stream.whitespace();
+        stream.accept_str("Starting")?;
+        stream.whitespace();
+        stream.accept_str("items")?;
+        stream.whitespace();
+        stream.accept(':')?;
+        stream.whitespace();
+
+        let mut res = VecDeque::new();
+
+        loop {
+            res.push_back(stream.parse_num()?);
+
+            if stream.accept_str(", ").is_none() {
+                break;
+            }
+        }
+
+        Some(res)
+    }
+
+    fn parse_operation(stream: &mut Parser) -> Option<Operation> {
+        stream.whitespace();
+        stream.accept_str("Operation")?;
+        stream.whitespace();
+        stream.accept(':')?;
+        stream.whitespace();
+        stream.accept_str("new")?;
+        stream.whitespace();
+        stream.accept_str("=")?;
+        stream.whitespace();
+
+        Operation::parse_expr(stream)
+    }
+
+    fn parse_test(stream: &mut Parser) -> Option<i64> {
+        stream.whitespace();
+        stream.accept_str("Test")?;
+        stream.whitespace();
+        stream.accept(':')?;
+        stream.whitespace();
+        stream.accept_str("divisible")?;
+        stream.whitespace();
+        stream.accept_str("by")?;
+        stream.whitespace();
+
+        stream.parse_num()
+    }
+
+    fn parse_condition(stream: &mut Parser, condition: &str) -> Option<usize> {
+        stream.whitespace();
+        stream.accept_str("If")?;
+        stream.whitespace();
+        stream.accept_str(condition)?;
+        stream.whitespace();
+        stream.accept(':')?;
+        stream.whitespace();
+
+        Self::parse_throw(stream)
+    }
+
+    fn parse_throw(stream: &mut Parser) -> Option<usize> {
+        stream.whitespace();
+        stream.accept_str("throw")?;
+        stream.whitespace();
+        stream.accept_str("to")?;
+        stream.whitespace();
+        stream.accept_str("monkey")?;
+        stream.whitespace();
+
+        stream.parse_num()
+    }
+
+    fn parse_monkey(stream: &mut Parser) -> Option<Self> {
+        Some(Self {
+            num: Self::parse_header(stream)?,
+            items: RefCell::new(Self::parse_starting_items(stream)?),
+            operation: Self::parse_operation(stream)?,
+            test: Self::parse_test(stream)?,
+            if_true: Self::parse_condition(stream, "true")?,
+            if_false: Self::parse_condition(stream, "false")?,
+            num_inspections: Cell::new(0),
+        })
+    }
+}
+
 pub fn parse(inp: &str) -> Vec<Monkey> {
     inp.split("\n\n")
-        .flat_map(|i| i.split('\n'))
-        .map(str::trim)
-        .tuples()
-        .map(
-            |(monkey, starting, operation, test, if_true, if_false)| Monkey {
-                num: monkey
-                    .strip_prefix("Monkey ")
-                    .unwrap()
-                    .strip_suffix(':')
-                    .unwrap()
-                    .parse()
-                    .unwrap(),
-                items: RefCell::new(
-                    starting
-                        .strip_prefix("Starting items: ")
-                        .unwrap()
-                        .split(", ")
-                        .map(|i| i.parse().unwrap())
-                        .collect(),
-                ),
-                operation: operation
-                    .strip_prefix("Operation: new = ")
-                    .unwrap()
-                    .parse()
-                    .unwrap(),
-                test: test
-                    .strip_prefix("Test: divisible by ")
-                    .unwrap()
-                    .parse()
-                    .unwrap(),
-                if_true: if_true
-                    .strip_prefix("If true: throw to monkey ")
-                    .unwrap()
-                    .parse()
-                    .unwrap(),
-                if_false: if_false
-                    .strip_prefix("If false: throw to monkey ")
-                    .unwrap()
-                    .parse()
-                    .unwrap(),
-                num_inspections: Cell::new(0),
-            },
-        )
+        .map(|i| Monkey::parse_monkey(&mut Parser::new(i)).unwrap())
         .collect()
 }
 

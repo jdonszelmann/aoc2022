@@ -53,4 +53,3 @@ Monkey 7:
   Test: divisible by 19
     If true: throw to monkey 6
     If false: throw to monkey 0
-
