@@ -6,18 +6,19 @@ pub use part1::run as run_part1;
 pub use part2::run as run_part2;
 use std::collections::HashSet;
 use std::iter;
+use std::ops::Add;
 
-type Pos = (i64, i64);
+pub type Pos<T> = (T, T);
 
-pub fn add_pos(a: Pos, b: Pos) -> Pos {
+pub fn add_pos<T: Add<Output = T>>(a: Pos<T>, b: Pos<T>) -> Pos<T> {
     (a.0 + b.0, a.1 + b.1)
 }
 
-pub fn manhattan_dist_pos(a: Pos, b: Pos) -> Pos {
+pub fn manhattan_dist_pos(a: Pos<i64>, b: Pos<i64>) -> Pos<i64> {
     ((a.0 - b.0).abs(), (a.1 - b.1).abs())
 }
 
-pub const AROUND: [Pos; 9] = [
+pub const AROUND: [Pos<i64>; 9] = [
     (0, 0),
     (-1, 0),
     (-1, 1),
@@ -29,11 +30,11 @@ pub const AROUND: [Pos; 9] = [
     (-1, -1),
 ];
 
-pub fn must_move(tail: Pos, head: Pos) -> bool {
+pub fn must_move(tail: Pos<i64>, head: Pos<i64>) -> bool {
     AROUND.iter().all(|a| add_pos(*a, tail) != head)
 }
 
-pub fn best_move(tail: Pos, head: Pos) -> Pos {
+pub fn best_move(tail: Pos<i64>, head: Pos<i64>) -> Pos<i64> {
     AROUND[1..]
         .iter()
         .map(|i| add_pos(*i, tail))
@@ -41,9 +42,9 @@ pub fn best_move(tail: Pos, head: Pos) -> Pos {
         .unwrap()
 }
 
-pub type Snek = [Pos];
+pub type Snek = [Pos<i64>];
 
-pub fn update_snek(snek: &mut Snek, head: Pos) {
+pub fn update_snek(snek: &mut Snek, head: Pos<i64>) {
     let [curr, rest@..] = snek else {
         return;
     };
@@ -72,7 +73,7 @@ pub fn simulate_snek<const N: usize>(inp: &str) -> usize {
     had.len()
 }
 
-pub fn parse(inp: &str) -> impl Iterator<Item = Pos> + '_ {
+pub fn parse(inp: &str) -> impl Iterator<Item = Pos<i64>> + '_ {
     inp.split([' ', '\n'])
         .tuples()
         .flat_map(|(dir, num)| iter::repeat(dir).take(num.parse().unwrap()))
