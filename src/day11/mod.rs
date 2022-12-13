@@ -20,6 +20,10 @@ impl<'a> Parser<'a> {
         }
     }
 
+    pub fn is_empty(&mut self) -> bool {
+        self.stream.peek().is_none()
+    }
+
     pub fn accept(&mut self, c: char) -> Option<()> {
         if self.stream.peek() == Some(&c) {
             let _ = self.stream.next();
@@ -62,7 +66,7 @@ impl<'a> Parser<'a> {
         Some(())
     }
 
-    fn whitespace(&mut self) -> bool {
+    pub fn whitespace(&mut self) -> bool {
         let mut res = false;
 
         while self.accept_with(|i| i.is_whitespace()).is_some() {
@@ -72,7 +76,7 @@ impl<'a> Parser<'a> {
         res
     }
 
-    fn parse_num<T: FromStr>(&mut self) -> Option<T> {
+    pub fn parse_num<T: FromStr>(&mut self) -> Option<T> {
         let mut res = String::new();
 
         while let Some(i) = self.accept_with(|i| i.is_ascii_digit()) {
