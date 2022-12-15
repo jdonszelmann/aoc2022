@@ -21,15 +21,7 @@ impl Ord for IntOrList {
     fn cmp(&self, other: &Self) -> Ordering {
         match (self, other) {
             (Int(a), Int(b)) => a.cmp(b),
-            (List(a), List(b)) => {
-                for (l, r) in a.iter().zip(b.iter()) {
-                    match l.cmp(r) {
-                        Ordering::Equal => continue,
-                        a => return a,
-                    }
-                }
-                a.len().cmp(&b.len())
-            }
+            (List(a), List(b)) => a.cmp(b),
             (Int(a), b) => List(vec![Int(*a)]).cmp(b),
             (a, Int(b)) => a.cmp(&List(vec![Int(*b)])),
         }

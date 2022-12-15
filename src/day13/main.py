@@ -42,11 +42,6 @@ def compare_pair(l, r):
 
 def main():
     inp = [i for i in open("data.in").read().split("\n\n")]
-    print(compare_pair(
-        eval(inp[8].split("\n")[0]),
-        eval(inp[8].split("\n")[1]),
-    ))
-    exit()
 
     oks = []
     total = 0
@@ -75,6 +70,7 @@ def main():
     a = packets.index([[2]]) + 1
     b = packets.index([[6]]) + 1
     print(a * b)
+
 
 if __name__ == '__main__':
     main()  

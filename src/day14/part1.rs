@@ -1,4 +1,4 @@
-use crate::day2::parse;
+use crate::day14::simulate;
 use std::fs::read_to_string;
 
 pub fn run() {
@@ -8,8 +8,8 @@ pub fn run() {
     println!("{}", implementation(&contents));
 }
 
-pub fn implementation(inp: &str) -> u64 {
-    0
+pub fn implementation(inp: &str) -> usize {
+    simulate(inp, true)
 }
 
 #[cfg(test)]
@@ -20,10 +20,12 @@ mod tests {
     #[test]
     pub fn test_day_14_part_1() {
         let contents = read_to_string("src/day14/data.in").expect("no input file found");
+        assert_eq!(implementation(&contents), 763);
     }
 
     #[test]
     pub fn test_day_14_part_1_test_input() {
-        let testdata = "";
+        let contents = read_to_string("src/day14/data.test").expect("no input file found");
+        assert_eq!(implementation(&contents), 24);
     }
 }

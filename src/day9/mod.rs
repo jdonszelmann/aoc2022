@@ -8,7 +8,7 @@ use std::collections::HashSet;
 use std::iter;
 use std::ops::Add;
 
-pub type Pos<T> = (T, T);
+pub type Pos<T = i64> = (T, T);
 
 pub fn add_pos<T: Add<Output = T>>(a: Pos<T>, b: Pos<T>) -> Pos<T> {
     (a.0 + b.0, a.1 + b.1)
