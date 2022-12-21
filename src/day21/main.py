@@ -32,7 +32,6 @@ class Add(Binary):
         super().__init__(name, a, b)
 
     def eval(self) -> int:
-        print(self.a, self.b)
         return self.a.eval() + self.b.eval()
 
     def find_humn_equal_to(self, const_value: int):
@@ -61,9 +60,9 @@ class Mul(Binary):
             return const_value
 
         if self.a.find("humn"):
-            return self.a.find_humn_equal_to(const_value / self.b.eval())
+            return self.a.find_humn_equal_to(const_value // self.b.eval())
         else:
-            return self.b.find_humn_equal_to(const_value / self.a.eval())
+            return self.b.find_humn_equal_to(const_value // self.a.eval())
 
 
 class Div(Binary):
@@ -79,7 +78,7 @@ class Div(Binary):
         elif self.a.find("humn"):
             return self.a.find_humn_equal_to(const_value * self.b.eval())
         else:
-            return self.b.find_humn_equal_to(self.a.eval() / const_value)
+            return self.b.find_humn_equal_to(self.a.eval() // const_value)
 
 
 class Sub(Binary):
